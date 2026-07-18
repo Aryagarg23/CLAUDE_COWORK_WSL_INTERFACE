@@ -1,6 +1,6 @@
 ---
 name: wsl-bridge
-description: Run commands inside the user's local WSL (Windows Subsystem for Linux) through the file-based cowork-wsl-bridge folder connected to the session. Use this whenever the user asks to run, build, test, install, or inspect ANYTHING in their WSL environment, their Linux home, their local repos or projects, or says things like "on my machine", "in wsl", "my local environment", "check my repo", or "use the bridge" — even if they don't mention WSL or the bridge explicitly. Cloud Cowork sessions cannot execute commands on the user's machine directly; this bridge is the ONLY way, so reach for it any time local execution is implied.
+description: Run commands inside the user's local WSL (Windows Subsystem for Linux) via the cowork-wsl-bridge — either live MCP tools (wsl_run_command / wsl_bridge_status, possibly under an mcp__remote-devices__wsl-bridge__ prefix) or the file-based fallback folder connected to the session. Use this whenever the user asks to run, build, test, install, or inspect ANYTHING in their WSL environment, their Linux home, their local repos or projects, or says things like "on my machine", "in wsl", "my local environment", "check my repo", or "use the bridge" — even if they don't mention WSL or the bridge explicitly. Cloud Cowork sessions cannot execute commands on the user's machine directly; this bridge is the ONLY way, so reach for it any time local execution is implied.
 ---
 
 # WSL Command Bridge
@@ -9,7 +9,9 @@ The user's Windows machine runs a daemon (`runner.sh`) inside WSL that watches a
 
 ## Transport: prefer MCP, fall back to files
 
-If your session exposes tools named `wsl_run_command` / `wsl_bridge_status` (proxied from the user's desktop app, possibly with an `mcp__` prefix), use them — same sandbox and allowlist, but real-time instead of ~10 s polling. Call `wsl_bridge_status` first to see the allowlist, then `wsl_run_command`. Use the file protocol below only when those tools are absent or failing.
+Look for tools named `wsl_run_command` / `wsl_bridge_status` — they may appear under a prefix like `mcp__remote-devices__wsl-bridge__` (the desktop app proxies the user's local MCP servers into the cloud session; exact prefix is client-dependent). If present, use them: same sandbox and allowlist as the file protocol, but real-time instead of ~10 s polling. Call `wsl_bridge_status` first to see the allowlist, then `wsl_run_command`.
+
+If those tools aren't listed, don't assume the setup is broken — the MCP registration lives in the user's `claude_desktop_config.json` (installed via `mcp/install.sh` in the repo) and only takes effect in *new* sessions started after a desktop app restart. Fall back to the file protocol below without commentary; mention the MCP fast lane only if the user asks why commands feel slow.
 
 ## Prerequisites — check these first (file transport)
 

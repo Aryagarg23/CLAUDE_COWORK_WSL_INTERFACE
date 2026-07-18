@@ -19,28 +19,44 @@ transports, one policy**. The file bridge remains the universal fallback
 
 ## Setup (once)
 
-1. Open your Claude desktop config file — on Windows:
-   `%APPDATA%\Claude\claude_desktop_config.json` (create it if missing).
-2. Add the server (adjust the repo path to where you cloned it):
+**Don't hand-edit `claude_desktop_config.json`.** It's not a scratch file —
+it holds your real app state (window layout, folder grants, feature flags).
+A careless paste can clobber it. Use the installer, which merges in just
+the `mcpServers.wsl-bridge` key, takes a timestamped backup first, and
+verifies nothing else changed:
 
-```json
-{
-  "mcpServers": {
-    "wsl-bridge": {
-      "command": "wsl.exe",
-      "args": ["-e", "python3", "/mnt/c/<path-to-repo>/mcp/server.py"]
-    }
-  }
-}
+```bash
+# from WSL, inside the cloned repo
+bash mcp/install.sh
 ```
 
-3. Restart the Claude desktop app.
+It auto-detects the config path (`/mnt/c/Users/<you>/AppData/Roaming/Claude/claude_desktop_config.json`);
+pass a path explicitly if it can't find it: `bash mcp/install.sh /path/to/claude_desktop_config.json`.
 
-That's it. Sessions now get two tools:
+Then **restart the Claude desktop app once** — it needs to reload the config
+file to pick up the new server entry. That's the only manual step.
+
+Verified end-to-end (July 2026): after one restart, new Cowork sessions get
+two live tools automatically, no per-session setup:
 
 - **`wsl_run_command`** — execute bash in WSL (sandboxed, non-interactive,
   configurable timeout up to 600 s)
 - **`wsl_bridge_status`** — report enforcement mode + allowlisted paths
+
+They show up under a `remote-devices` / `wsl-bridge` prefix (client-dependent,
+e.g. `mcp__remote-devices__wsl-bridge__wsl_run_command`) since the desktop
+app proxies your local MCP servers into the cloud session.
+
+### If it doesn't show up after restarting
+
+The daemon and the MCP registration are independent — check both:
+
+1. Confirm the config actually changed: `grep -A4 wsl-bridge` the config file
+   the installer printed.
+2. Fully quit the desktop app (not just close the window) and reopen it —
+   some platforms keep it running in the tray/menu bar.
+3. Start a **new** Cowork session — an already-open session won't pick up a
+   server that registered after it started.
 
 ## Notes
 

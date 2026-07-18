@@ -37,7 +37,13 @@ Because WSL mounts your Windows drives at `/mnt/c/...` automatically, the shared
 
 ### Optional fast lane: MCP transport
 
-The file protocol is the universal fallback that works for any agent. If you use the Claude desktop app, `mcp/` adds a second transport: a zero-dependency MCP server the app launches inside your WSL and proxies into cloud sessions as real-time tools (`wsl_run_command`, `wsl_bridge_status`) — ~instant instead of ~10 s per round-trip, same `bridge.conf` sandbox and allowlist. One config entry + app restart; see [`mcp/README.md`](mcp/README.md).
+The file protocol is the universal fallback that works for any agent. If you use the Claude desktop app, `mcp/` adds a second transport: a zero-dependency MCP server the app launches inside your WSL and proxies into cloud sessions as real-time tools (`wsl_run_command`, `wsl_bridge_status`) — ~instant instead of ~10 s per round-trip, same `bridge.conf` sandbox and allowlist.
+
+```bash
+bash mcp/install.sh   # safely merges into claude_desktop_config.json, backs it up first
+```
+
+Then restart the desktop app once. Verified end-to-end — see [`mcp/README.md`](mcp/README.md) for details and troubleshooting.
 
 ## Quick start
 
