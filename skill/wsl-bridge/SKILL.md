@@ -7,7 +7,11 @@ description: Run commands inside the user's local WSL (Windows Subsystem for Lin
 
 The user's Windows machine runs a daemon (`runner.sh`) inside WSL that watches a shared folder (the cowork-wsl-bridge repo — WSL sees it under `/mnt/c/...`). You execute commands by writing bash scripts into that folder via the device-bridge tools and reading results back. The user consented to this by installing the bridge. Full docs: https://github.com/Aryagarg23/CLAUDE_COWORK_WSL_INTERFACE
 
-## Prerequisites — check these first
+## Transport: prefer MCP, fall back to files
+
+If your session exposes tools named `wsl_run_command` / `wsl_bridge_status` (proxied from the user's desktop app, possibly with an `mcp__` prefix), use them — same sandbox and allowlist, but real-time instead of ~10 s polling. Call `wsl_bridge_status` first to see the allowlist, then `wsl_run_command`. Use the file protocol below only when those tools are absent or failing.
+
+## Prerequisites — check these first (file transport)
 
 1. **Locate the bridge folder** among the session's connected folders: it contains `runner.sh`, `inbox/`, `outbox/`, and `heartbeat.txt`. If no connected folder matches, ask the user to add their bridge folder via "Add folder" in the desktop app.
 2. **Read the folder's `CLAUDE.md` and `CLAUDE.local.md`** — the local file (gitignored, per-machine) documents this machine's specifics (username, project locations, allowlisted paths). Treat them as the source of truth over this skill.

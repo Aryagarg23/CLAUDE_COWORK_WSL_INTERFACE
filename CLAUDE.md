@@ -2,6 +2,10 @@
 
 This folder is a **command bridge into the user's local WSL environment**. If you are an AI agent (Claude Cowork or otherwise) with read/write access to this folder, you can execute bash commands inside the user's WSL by following the protocol below. The user has consented to this by installing and starting the bridge.
 
+## Transport selection: MCP first, files as fallback
+
+If tools named `wsl_run_command` / `wsl_bridge_status` are available in your session (proxied from the user's desktop app — possibly with an `mcp__`/server prefix), **prefer them**: same sandbox and allowlist as the file bridge, but ~instant instead of ~10 s per round-trip. Call `wsl_bridge_status` first to see what you may modify. Fall back to the file protocol below whenever the MCP tools are absent or erroring.
+
 ## Before sending anything
 
 Read `heartbeat.txt`. It is rewritten every second by the daemon. If its timestamp is more than ~30 seconds old, the daemon is **not running** — tell the user to run `start_bridge.bat` (or `install_autostart.bat` for permanent setup) instead of queuing commands into the void.

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wsl-bridge": {
+      "command": "wsl.exe",
+      "args": ["-e", "python3", "/mnt/c/<path-to-repo>/mcp/server.py"]
+    }
+  }
+}

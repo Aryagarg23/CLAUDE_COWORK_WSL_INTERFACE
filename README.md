@@ -35,6 +35,10 @@ The bridge is a ~100-line bash daemon plus a shared Windows folder. No network, 
 
 Because WSL mounts your Windows drives at `/mnt/c/...` automatically, the shared folder needs no configuration at all.
 
+### Optional fast lane: MCP transport
+
+The file protocol is the universal fallback that works for any agent. If you use the Claude desktop app, `mcp/` adds a second transport: a zero-dependency MCP server the app launches inside your WSL and proxies into cloud sessions as real-time tools (`wsl_run_command`, `wsl_bridge_status`) — ~instant instead of ~10 s per round-trip, same `bridge.conf` sandbox and allowlist. One config entry + app restart; see [`mcp/README.md`](mcp/README.md).
+
 ## Quick start
 
 ```
@@ -61,6 +65,7 @@ To make the bridge a **default capability** of every future Cowork session (inst
 | `uninstall_autostart.bat` | Removes the autostart entry and stops the daemon. |
 | `bridge.conf.example` | Access-control / settings template — copy to `bridge.conf` (gitignored). |
 | `skill/wsl-bridge.skill` | Companion Claude skill — save it to your Claude profile so every Cowork session speaks the bridge protocol by default. |
+| `mcp/server.py` | Optional MCP transport — real-time tool calls instead of file polling, same sandbox (see `mcp/README.md`). |
 
 Alternative for cron fans (inside WSL): `@reboot bash /mnt/c/<path>/runner.sh >/dev/null 2>&1 &`
 
