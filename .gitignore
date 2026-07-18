@@ -1,0 +1,16 @@
+# Runtime state — never commit command history or results
+inbox/*
+outbox/*
+archive/*
+!inbox/.gitkeep
+!outbox/.gitkeep
+!archive/.gitkeep
+heartbeat.txt
+bridge.log
+runner.pid
+*.tmp
+.tmp/
+
+# Machine-specific config — commit bridge.conf.example instead
+bridge.conf
+CLAUDE.local.md

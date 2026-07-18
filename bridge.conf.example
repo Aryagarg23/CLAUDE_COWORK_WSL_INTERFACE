@@ -1,0 +1,47 @@
+# cowork-wsl-bridge — access control & settings (EXAMPLE)
+#
+# Copy to bridge.conf and edit for your machine:
+#     cp bridge.conf.example bridge.conf
+#
+# bridge.conf is machine-specific and .gitignore'd — it never gets committed.
+# The daemon re-reads it before EVERY command, so edits apply immediately.
+# Plain bash syntax.
+
+# ------------------------------------------------------------------
+# ALLOWED_PATHS — the repos/folders the agent may MODIFY.
+#
+# When non-empty, commands run inside a bubblewrap sandbox where the
+# ENTIRE filesystem is mounted read-only except:
+#   - the paths listed here            (read-write)
+#   - the bridge folder itself         (read-write, for results)
+#   - a private, empty /tmp            (read-write, discarded after)
+#
+# The agent can still READ everything your user can read (it needs to
+# inspect configs, toolchains, etc.) — it just can't change anything
+# outside these paths. Leave the array empty () for unrestricted mode.
+#
+# Hard enforcement requires bubblewrap:   sudo apt install bubblewrap
+# Without bwrap, restrictions are advisory-only and every result's
+# .meta file reports  sandbox=advisory  so the agent (and you) know.
+#
+# Tip: some tools need writable caches/venvs — add them explicitly,
+# e.g. "$HOME/.cache/pip" — rather than opening up all of $HOME.
+# ------------------------------------------------------------------
+ALLOWED_PATHS=(
+  "$HOME/projects"
+  # "$HOME/work/some-other-repo"
+  # "$HOME/.cache/pip"
+)
+
+# SANDBOX policy when ALLOWED_PATHS is non-empty:
+#   auto    = enforce with bwrap when installed, advisory otherwise (default)
+#   require = REFUSE to execute anything unless bwrap sandboxing is active
+#             (fail-closed: choose this if restrictions matter to you)
+#   off     = no restrictions even if ALLOWED_PATHS is set
+SANDBOX="auto"
+
+# Default working directory for commands (default: $HOME)
+#BRIDGE_CWD="$HOME/projects"
+
+# Per-command timeout in seconds (default: 600)
+#BRIDGE_TIMEOUT=600
